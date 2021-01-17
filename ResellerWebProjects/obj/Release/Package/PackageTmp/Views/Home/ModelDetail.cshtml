@@ -1,0 +1,54 @@
+﻿@using Matbaa.Services.BLL.Manager.ApiProducts
+@model SingleModels
+@{
+    string RadioClass = "";
+
+    ViewBag.js = "mb" + Model.spProductModels.GroupID + ".js";
+    ViewBag.Title = Model.spProductModels.ModelName;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+
+    <div class="col-md-4 olcu">
+      @Html.Partial("~/Views/Home/ModelControls.cshtml", Model)
+        <img src="@Model.spProductModels.ImagesUrlThumbs" class="img-responsive" />
+    </div>
+
+    <div class="col-md-8">
+        <span class="pull-left ecma-name"> <b> ECMA  : @(Model.spProductModels.EcmaCode)</b></span>
+        <span class="pull-right btn btn-default model-name">@("MB-" + Model.spProductModels.GroupID + "-" + Model.spProductModels.Id)</span>
+        <div id="Baskutu" class="Baskutu scrollbar">
+
+            <div id="dasbord">
+                <svg width="1200" height="600"
+                     id="SVGContainer" xmlns:svg="http://www.w3.org/2000/svg"
+                     xmlns="http://www.w3.org/2000/svg" version="1.1" class="swg">
+                    <g class="ParetSvgContentMain">
+                        <rect x="20" y="30" class="rectParent">
+
+                        </rect>
+                        <g class="ParetSvgContent active">
+                            <g class="gbody" ParentX="20" ParentY="30" mX="1" mY="1">
+
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+            </div>
+
+        </div>
+
+        <button class="DownloadButton pdfExport"
+                data-name="@(Model.spProductModels.ModelName + ".pdf")"
+                data-hak="1"
+                type="button">
+            <i class="fa fa-download"></i>
+            <span>
+                BIÇAK İZİNİ İNDİR
+            </span>
+        </button>
+
+       
+    </div>
+</div>

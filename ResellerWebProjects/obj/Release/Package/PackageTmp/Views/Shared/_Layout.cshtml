@@ -1,0 +1,34 @@
+﻿
+@{
+    string MainSite = "https://kutumodeli.com/";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Reseller Demo</title>
+    <link rel="stylesheet" href="@(MainSite +"/Content/css/bootstrap.min.css")" />
+    <link href="@(MainSite +"/Content/style.css")" rel="stylesheet" />
+    <link href="@(MainSite +"/Content/models/marker.css")" rel="stylesheet" />
+
+</head>
+<body>
+    <div class="container">
+        @RenderBody()
+    </div>
+    <script type="text/javascript" src="@(MainSite +"/Content/js/jquery.min.js")"></script>
+    <script type="text/javascript" src="@(MainSite +"/Content/js/bootstrap.js")"></script>
+    @if (ViewBag.js != null)
+    {
+        <script type="text/javascript" src="@(MainSite +"/Content/models/jspdf.min.js")"></script>
+        <script type="text/javascript" src="@(MainSite +"/Content/models/jspdf.debug.js")"></script>
+        <script type="text/javascript" src="@(MainSite +"/Content/js/formSerlaze.js")"></script>
+        <script type="text/javascript" src="@(MainSite +"/Content/models/" + @ViewBag.js)"></script>
+        <script type="text/javascript" src="@(MainSite +"/Content/models/dashbord.min.js")"></script>
+
+    }
+</body>
+</html>

@@ -1,0 +1,297 @@
+﻿@using Matbaa.Services.BLL.Manager.ApiProducts
+@model SingleModels
+@{
+    string RadioClass = "";
+    Layout = null;
+}
+
+@using (Html.BeginForm("CreatBox", "Home", FormMethod.Post, new { @id = "svgform" }))
+{
+    @Html.Hidden("ImagesID", Model.spProductModels.Id)
+    @Html.Hidden("ProductID", Model.spProductModels.GroupID)
+    <h5>
+        Model Adı :
+        <span>@Model.spProductModels.ModelName</span>
+
+    </h5>
+
+
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item active">
+            <a class="nav-link in active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Ana Ölçüler</a>
+        </li>
+        <li class="nav-item @(Model.spProductModels.ModelType ==null || Model.spProductModels.ModelType.Count() < 1?"hidden":"")">
+            <a class="nav-link" id="HiddenOptions-tab" data-toggle="tab" href="#HiddenOptions" role="tab" aria-controls="HiddenOptions" aria-selected="false">Ek Özellikler</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="opsiyoneltab-tab" data-toggle="tab" href="#opsiyoneltab" role="tab" aria-controls="opsiyoneltab" aria-selected="false"> Gizli Ölçüler</a>
+        </li>
+
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade in active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            <div class="form-group row hidden">
+                <div class="col-md-3">
+                    <label class="col-form-label"> Birim Hesabı</label>
+                </div>
+                <div class="col-md-9">
+                    <select class="form-control" name="birim" id="birim">
+                        <option>Seçiniz</option>
+                        <option value="cm">cm</option>
+                        <option value="mm">mm</option>
+                        <option value="px" selected>pixel</option>
+                        <option value="in">inç</option>
+                    </select>
+                </div>
+            </div>
+
+            @foreach (var item in Model.spProductModels.Controller.Where(s => s.CodeType == "1"))
+            {
+                var clss = "";
+
+                if (item.MaxValues != "" | item.MinValues != "")
+                {
+                    clss = "MaximumYuzde";
+                }
+                <div class="input-group">
+                    <div class="input-group-btn"><a class="btndetail btn btn-default labeldetail"><b>@item.Code.ToString().ToUpper():</b></a></div>
+                    <input type="number" step="0.01"
+                           id="@(item.Code.ToString().ToLower() +"_cmd")"
+                           name="@(item.Code.ToString().ToLower() +"_cmd")"
+                           data-class="@item.Code.ToString().ToUpper()" value="@item.Values" class="form-control @clss"
+                           data-min="@item.MinValues" data-max="@item.MaxValues">
+                    <div class="input-group-btn"><a class="btndetail btn btn-default"><small>mm</small></a></div>
+                </div>
+            }
+
+            <div class="input-group">
+                <div class="input-group-btn"><a class="btndetail btn btn-default labeldetail"><b>Malzeme:</b></a></div>
+                <select class="form-control"
+                        id="malzeme"
+                        name="malzeme"
+                        data-font-size-slogan="50"
+                        data-font-size-url="50"
+                        data-y-slogan="40"
+                        data-y-url="61"
+                        data-r-slogan="10"
+                        data-r-url="120">
+                 
+                    @foreach (var item in Model.MeterialsList)
+                    {
+                        <option value="@item.Value">@item.Name</option>
+                    }
+                </select>
+                <div class="input-group-btn">
+                    <a class="btndetail btn btn-default"><small>mm</small></a>
+                </div>
+            </div>
+            <div class="form-group text-center @(Model.spProductModels.modelCategoryType == ModelCategoryType.Oluklu?"":"hidden")">
+
+
+                <p>
+                    <input type="radio" step="0.01" checked value="0" class="io_cmd" name="io_cmd">
+                    <b>Ölçüleri dış ölçü olarak ayarla </b>
+                </p>
+                <p>
+                    <input type="radio"
+                           data-toggle="tooltip" data-placement="top"
+                           title="A,B-H ölçülerine malzeme miktarı kadar ilave ölçü ekler"
+                           step="0.01" value="1" class="io_cmd" name="io_cmd"> <b>Ölçüleri iç ölçü olarak ayarla </b>
+                </p>
+            </div>
+            <!-- Tab ana ölçüler bitiş -->
+
+        </div>
+        @if (Model.spProductModels.ModelType.Count< 1 || Model.spProductModels.ModelType !=null)
+        {
+            <div class="tab-pane fade " id="HiddenOptions" role="tabpanel" aria-labelledby="home-tab">
+                <div class="input-group">
+                    <div class="input-group-btn"><a class="btndetail btn btn-default labeldetail"><b>Model Tipi:</b></a></div>
+                    <select class="form-control"
+                            id="ModelType"
+                            name="ModelType">
+                        @foreach (var item in Model.OptionList.Where(s => s.ParentOption == 1))
+                        {
+                            var moeltype = Model.spProductModels.ModelType.Any(s => s.OptionID == item.OptionID);
+                            <option value="@item.OptionValue"
+                                    @(moeltype ? "selected" : "")>
+                                @item.OptionName
+                            </option>
+                        }
+
+
+                    </select>
+                    <div class="input-group-btn"><a class="btndetail btn btn-default"><small>mm</small></a></div>
+                </div>
+
+                <div class="form-group">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th colspan="100%" class="text-center">Ek Özellikler</th>
+                            </tr>
+                            <tr>
+                                <th class="text-center">Normal</th>
+                                <th class="text-center">Askılık</th>
+                                <th class="text-center">Dil</th>
+                                <th class="text-center">Parmak</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-center">
+                                    <input type="radio" class="OtherRadio   NormalRadio" data-value="Normal" name="OtherGrup" />
+                                </td>
+                                <td class="text-center">
+                                    <input type="radio" class="OtherRadio AskiRadio" data-value="Aski" name="OtherGrup" />
+                                </td>
+                                <td class="text-center">
+                                    <input type="radio" class="OtherRadio DilRadio" data-value="Dil" name="OtherGrup" />
+                                </td>
+                                <td class="text-center">
+                                    <input type="radio" class="OtherRadio ParmakRadio" data-value="Parmak" name="OtherGrup" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="input-group OtherGroup Aski " style="visibility:hidden">
+                    <div class="input-group-btn"><a class="btndetail btn btn-default labeldetail"><b>Askılık Tipi:</b></a></div>
+                    <select class="form-control"
+                            id="AskilikType"
+                            name="AskilikType">
+                        @foreach (var item in Model.OptionList.Where(s => s.ParentOption == 3))
+                        {
+                            var moeltype = Model.spProductModels.ModelType.Any(s => s.OptionID == item.OptionID);
+                            <option value="@item.OptionValue"
+                                    @(moeltype ? "selected" : "")
+                                    @(item.OptionValue == 1 ? "hidden" : "")>
+                                @item.OptionName
+                            </option>
+                            if (moeltype & item.OptionValue != 0)
+                            {
+                                RadioClass = "Aski";
+                            }
+                        }
+
+
+                    </select>
+                    <div class="input-group-btn"><a class="btndetail btn btn-default"><small>mm</small></a></div>
+                </div>
+                <div class="input-group OtherGroup Dil ">
+                    <div class="input-group-btn"><a class="btndetail btn btn-default labeldetail"><b>Dil Tipi:</b></a></div>
+                    <select class="form-control"
+                            id="DilType"
+                            name="DilType">
+                        @foreach (var item in Model.OptionList.Where(s => s.ParentOption == 2))
+                        {
+                            var moeltype = Model.spProductModels.ModelType.Any(s => s.OptionID == item.OptionID);
+                            <option value="@item.OptionValue"
+                                    @(moeltype ? "selected" : "")
+                                    @(item.OptionValue == 1 ? "hidden" : "")>
+                                @item.OptionName
+                            </option>
+                            if (moeltype & item.OptionValue != 0)
+                            {
+                                RadioClass = "Dil";
+                            }
+                        }
+
+
+                    </select>
+                    <div class="input-group-btn"><a class="btndetail btn btn-default"><small>mm</small></a></div>
+                </div>
+
+                <div class="input-group OtherGroup Parmak ">
+                    <div class="input-group-btn"><a class="btndetail btn btn-default labeldetail"><b>Parmak Tipi:</b></a></div>
+                    <select class="form-control"
+                            id="ParmakType"
+                            name="ParmakType">
+                        @foreach (var item in Model.OptionList.Where(s => s.ParentOption == 4))
+                        {
+                            var moeltype = Model.spProductModels.ModelType.Any(s => s.OptionID == item.OptionID);
+                            <option value="@item.OptionValue"
+                                    @(moeltype ? "selected" : "")
+                                    @(item.OptionValue == 1 ? "hidden" : "")>
+                                @item.OptionName
+                            </option>
+                            if (moeltype & item.OptionValue != 0)
+                            {
+                                RadioClass = "Parmak";
+                            }
+                        }
+
+
+                    </select>
+                    <div class="input-group-btn"><a class="btndetail btn btn-default"><small>mm</small></a></div>
+                </div>
+
+                <div class="Aski OtherGroup AskiHidden">
+                    <div class="input-group">
+                        <div class="input-group-btn"><a class="btndetail btn btn-default labeldetail"><b>M1:</b></a></div>
+                        <input type="number" step="0.01" id="m1_cmd" name="m1_cmd" data-class="M1" value="30" class="form-control">
+                        <div class="input-group-btn"><a class="btndetail btn btn-default"><small>mm</small></a></div>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-btn"><a class="btndetail btn btn-default labeldetail"><b>M4:</b></a></div>
+                        <input type="number" step="0.01" id="m4_cmd" name="m4_cmd" data-class="M4" value="20" class="form-control">
+                        <div class="input-group-btn"><a class="btndetail btn btn-default"><small>mm</small></a></div>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-btn"><a class="btndetail btn btn-default labeldetail"><b>M9:</b></a></div>
+                        <input type="number" step="0.01" id="m9_cmd" name="m9_cmd" data-class="M9" value="7" class="form-control">
+                        <div class="input-group-btn"><a class="btndetail btn btn-default"><small>mm</small></a></div>
+                    </div>
+                </div>
+
+                <div class="input-group OtherGroup Parmak ParmakContent">
+                    <div class="input-group-btn"><a class="btndetail btn btn-default labeldetail"><b>R1:</b></a></div>
+                    <input type="number" step="0.01" id="r1_cmd" name="r1_cmd" data-class="R1" value="15.83" class="form-control">
+                    <div class="input-group-btn"><a class="btndetail btn btn-default"><small>mm</small></a></div>
+                </div>
+                <div class="input-group OtherGroup Dil Dkontent">
+                    <div class="input-group-btn"><a class="btndetail btn btn-default labeldetail"><b>D:</b></a></div>
+                    <input type="number" step="0.01" id="d_cmd" name="d_cmd" data-class="D" value="" class="form-control MaximumYuzde" data-min="15" data-max="50">
+                    <div class="input-group-btn"><a class="btndetail btn btn-default"><small>mm</small></a></div>
+                </div>
+            </div>
+        }
+
+        <div class="tab-pane fade " id="opsiyoneltab" role="tabpanel" aria-labelledby="home-tab">
+            @foreach (var item in Model.spProductModels.Controller.Where(s => s.CodeType == "0"))
+            {
+                var clss = "";
+
+                if (item.MaxValues != "" | item.MinValues != "")
+                {
+                    clss = "MaximumYuzde";
+                }
+                <div class="input-group">
+                    <div class="input-group-btn"><a class="btndetail btn btn-default labeldetail"><b>@item.Code.ToString().ToUpper():</b></a></div>
+                    <input type="number" step="0.01"
+                           id="@(item.Code.ToString().ToLower() +"_cmd")"
+                           name="@(item.Code.ToString().ToLower() +"_cmd")"
+                           data-class="@item.Code.ToString().ToUpper()" value="@item.Values" class="form-control @clss"
+                           data-min="@item.MinValues" data-max="@item.MaxValues">
+                    <div class="input-group-btn"><a class="btndetail btn btn-default"><small>mm</small></a></div>
+                </div>
+            }
+        </div>
+    </div>
+    @Html.Hidden("RadioClass", RadioClass)
+    <div class="form-group row">
+
+        <div class="col-md-12">
+            <button class="btn btn-sm btn-default  BtnHide pull-left active" type="button" data-id="1">
+                <i class="fa fa-eye"></i>  Ölçüleri Gizle
+            </button>
+            <button type="button" class="btn btn-success get-btn Add pull-right">
+                <i class="fa fa-calculator"></i>
+                Hesapla
+            </button>
+        </div>
+    </div>
+}
+

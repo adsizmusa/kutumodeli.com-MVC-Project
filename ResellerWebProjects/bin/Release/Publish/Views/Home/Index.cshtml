@@ -1,0 +1,20 @@
+﻿@using Matbaa.Services.BLL.Manager.ApiProducts 
+@model IEnumerable<spProductModels>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4">
+                <a href="@Url.Action("ModelDetail","Home",new { Id= item.Id})">
+                    <img src="@item.ImagesUrlThumbs" class="img-responsive" />
+                    <p>
+                        @item.ModelName
+                    </p>
+                </a>
+            </div>
+        }
+    </div>
